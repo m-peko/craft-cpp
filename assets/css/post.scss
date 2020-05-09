@@ -60,11 +60,15 @@ $prompt-newer: "{{ site.data.label.post.button.next }}";
 
   .btn {
     @include btn-post-nav;
-    color: var(--link-color);
+    color: var(--text-color);
     &:hover {
-      background: rgb(255, 173, 51);
-      color: rgb(34, 34, 39);
-      border-color: rgb(255, 173, 51);
+      background: rgb(43, 56, 62);
+      color: var(--btn-backtotop-hover-color);
+      border-color: rgb(43, 56, 62);
+    }
+    &:focus, &.focus {
+      outline: none !important;
+      box-shadow: none !important;
     }
     &.disabled {
       @include btn-post-nav;
@@ -75,9 +79,6 @@ $prompt-newer: "{{ site.data.label.post.button.next }}";
       &:hover {
         border-color: none;
       }
-    }
-    &.btn-outline-primary.disabled:focus {
-      box-shadow: none;
     }
   }
 
@@ -165,6 +166,7 @@ $prompt-newer: "{{ site.data.label.post.button.next }}";
       color: var(--text-color);
     }
     &:hover {
+      background-color: rgb(43, 56, 62);
       -webkit-transform: translate3d(0, -3px, 0);
       transform: translate3d(0, -3px, 0);
       filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.08));
