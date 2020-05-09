@@ -71,10 +71,10 @@
   }
   &.active {
     .page-link {
-      background-color: var(--btn-active-bg);
-      border-color: var(--btn-active-border-color);
       box-shadow: 0 0 8px 0 var(--btn-paginator-shadow) !important;
-      color: var(--btn-text-color);
+      background-color: rgb(255, 173, 51);
+      border-color: rgb(255, 173, 51);
+      color: rgb(34, 34, 39);
     }
   }
   &.disabled {
