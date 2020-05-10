@@ -16,7 +16,7 @@ description: >-                                     # used by seo meta and the a
   Blog about modern C++ and software design
 
 # Replace with the website url, e.g. 'https://username.github.io'
-url: 'protocol://domain'
+url: 'https://m-peko.github.io'
 
 author: Marin Peko                      # change to your full name
 
@@ -42,7 +42,7 @@ google_site_verification: google_meta_tag_verification # change to your verifica
 #--------------------------
 
 # if your site type is Project Pages site, change below value to '/projectname'
-baseurl: ''
+baseurl: '/craft-cpp'
 
 # Change to your timezone › http://www.timezoneconverter.com/cgi-bin/findzone/findzone
 timezone: Asia/Shanghai
