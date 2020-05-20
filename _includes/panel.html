@@ -10,28 +10,16 @@
 
   <div class="access">
 
-  {% if site.data.updates %}
-    {% assign MAX_SIZE = 5 %}
-    {% assign sum = 0 %}
-    {% assign sort_list = "" | split: "" %}
-
-    {% for entry in site.data.updates %}
-      {% capture elem %}
-        {{- entry.lastmod -}}::{{- entry.filename -}}
-      {% endcapture %}
-      {% assign sort_list = sort_list | push: elem %}
-    {% endfor %}
-
-    {% assign sort_list = sort_list | sort | reverse %}
-
-  {% endif %} <!-- site.data.updates -->
-
     <div id="access-tags">
       <h3 data-toc-skip>
         {{- site.data.label.panel.trending_tags -}}
       </h3>
       <div class="d-flex flex-wrap mt-3 mb-1 mr-3">
-       {% include trending-tags.html %}
+      {% include trending-tags.html %}
+      {% for tag in trending_tags %}
+        {% capture url %}/tags/{{ tag | downcase | url_encode }}/{% endcapture %}
+        <a class="post-tag" href="{{ url | relative_url }}">{{ tag | replace: '-', ' ' }}</a>
+       {% endfor %}
       </div>
     </div>
 

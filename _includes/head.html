@@ -80,9 +80,10 @@
       <link rel="preload" href="{{ site.baseurl }}/assets/css/archives.css" as="style">
       <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/archives.css">
 
-    {% elsif page.title == 'About' %}
-      <link rel="preload" href="{{ site.baseurl }}/assets/css/about.css" as="style">
-      <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/about.css">
+    {% else %}
+      <link rel="preload" href="{{ site.baseurl }}/assets/css/page.css" as="style">
+      <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/page.css">
+
     {% endif %}
 
   {% elsif page.layout == 'category' or page.layout == 'tag' %}
@@ -142,5 +143,8 @@
   {% endif %}
 
   <script src="{{ site.baseurl }}/assets/js/dist/tooltip-loader.min.js" async></script>
+
+  <!-- PWA -->
+  <script src="{{ '/app.js' | relative_url }}" defer></script>
 
 </head>
