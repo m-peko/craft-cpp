@@ -18,10 +18,11 @@
   --footer-bg-color: var(--main-wrapper-bg);
 
   /* common color */
+  --highlight-color: rgb(255, 173, 51);
   --text-color: rgb(175, 176, 177);
   --text-muted-color: rgb(107, 116, 124);
-  --link-color: rgb(255, 173, 51);
-  --link-underline-color: rgb(255, 173, 51);
+  --link-color: var(--highlight-color);
+  --link-underline-color: var(--highlight-color);
   --main-border-color: rgb(44, 45, 45);
   --button-bg: rgb(39, 40, 33);
   --blockquote-border-color: rgb(66, 66, 66);
@@ -29,9 +30,9 @@
 
   --btn-border-color: rgb(63, 65, 68);
   --btn-backtotop-color: var(--text-color);
-  --btn-backtotop-hover-color: rgb(255, 173, 51);
+  --btn-backtotop-hover-color: var(--highlight-color);
   --btn-backtotop-border-color: var(--btn-border-color);
-  --btn-backtotop-border-hover-color: rgb(255, 173, 51);
+  --btn-backtotop-border-hover-color: var(--highlight-color);
   --btn-box-shadow: var(--main-wrapper-bg);
 
   --card-bg: rgb(41, 40, 40);
@@ -39,7 +40,7 @@
   --label-color: rgb(108, 117, 125);
 
   /* Sidebar */
-  --nav-cursor-color: rgb(255, 173, 51);
+  --nav-cursor-color: var(--highlight-color);
   --sidebar-bg: radial-gradient(circle, #242424 0%, #1d1f27 100%);
 
   /* Top Bar */
@@ -55,7 +56,7 @@
   --btn-paginator-shadow: var(--main-wrapper-bg);
 
   /* Posts */
-  --toc-highlight: rgb(255, 173, 51);
+  --toc-highlight: var(--highlight-color);
   --tag-bg: rgb(41, 40, 40);
   --tag-hover: rgb(43, 56, 62);
   --tb-odd-bg: rgba(52, 53, 42, 0.52); /* odd rows of the posts' table */
@@ -63,7 +64,7 @@
   --tb-border-color: var(--tb-odd-bg);
   --footnote-target-bg: rgb(63, 81, 181);
   --btn-share-color: #6c757d;
-  --btn-share-hover-color: rgb(255, 173, 51);
+  --btn-share-hover-color: var(--highlight-color);
   --relate-post-date: var(--text-muted-color);
   --card-border-color: var(--main-wrapper-bg);
   --card-box-shadow: var(--main-wrapper-bg);
@@ -85,7 +86,7 @@
   --timeline-year-dot-color: var(--timeline-color);
 
   /* Footer */
-  ---footer-link: rgb(255, 173, 51);
+  ---footer-link: var(--highlight-color);
 
   .post-content img {
     filter: brightness(90%);

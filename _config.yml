@@ -28,6 +28,9 @@ linkedin:
 github:
   username: m-peko                      # change to your github username
 
+stack-overflow:
+  username: nutcracker                  # change to your stack-overflow username
+
 social:
   name: Marin Peko                      # it will shows as the copyright owner in Footer
   email: marinpeko5@gmail.com           # change to your email address
