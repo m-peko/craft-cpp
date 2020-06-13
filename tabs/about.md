@@ -38,19 +38,62 @@ title: About
 
 <span style="color: var(--highlight-color); display: inline-block; width: 300px;">Software Engineer @ Cellusys</span><span style="display: inline-block; width: 200px;"><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Oct 2018 - Present</span><span style="display: inline-block; width: 150px;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Split, Croatia</span>
 
-My main responsibility here is working on a real-time performance-critical network monitoring product which includes library for decoding telecommunication protocols such as GTP and Diameter. I am also working on other network tools like *Smart Recording* where high-performance is one of the main requirements. Technologies used in implementation are C/C++, Google Test framework, Python and Docker.
+<div style="text-align: justify;">
+    Responsibilities:
+    <ul>
+        <li>working on the <i>Mobile Insight</i> product</li>
+        <li>designing and implementing software for smart recording of network packets</li>
+        <li>troubleshooting and debugging the product on the customer system</li>
+        <li>using C and C++ in implementation</li>
+        <li>using Google Test framework for testing</li>
+        <li>using Python for both application development and scripting</li>
+        <li>working in a Docker environment</li>
+        <li>setting up the CI</li>
+    </ul>
+</div>
+
+<br/>
 
 <span style="color: var(--highlight-color); display: inline-block; width: 300px;">External Associate @ FESB</span><span style="display: inline-block; width: 200px;"><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Oct 2019 - Present</span><span style="display: inline-block; width: 150px;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Split, Croatia</span>
 
-Teaching students on *Faculty of Electrical Engineering, Mechanical Engineering and Naval Architecture* about Internet concepts and software development in general.
+<div style="text-align: justify;">
+    Responsibilities:
+    <ul>
+        <li>holding lectures related to the concepts of the Internet</li>
+        <li>holding lectures related to the software development</li>
+    </ul>
+</div>
+
+<br/>
 
 <span style="color: var(--highlight-color); display: inline-block; width: 300px;">Student Software Engineer @ ESR Labs</span><span style="display: inline-block; width: 200px;"><i class="fas fa-calendar" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Jul 2018 - Sep 2018</span><span style="display: inline-block; width: 150px;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Munich, Germany</span>
 
-Main responsibilities were implementation and integration of C++ network components, implementation of a Python network application and creation of both web user interface and command line interface. Technologies used in implementation and scripting were C/C++, Python, ReactJS as well as Google's Protocol Buffers.
+<div style="text-align: justify;">
+    Responsibilities:
+    <ul>
+        <li>implementation and integration of C++ network components</li>
+        <li>implementation of a Python network application</li>
+        <li>creation of both web user interface and command line interface</li>
+        <li>using C, C++, Javascript / React and Python in implementation</li>
+        <li>using Python for scripting</li>
+        <li>using Google's Protocol Buffers</li>
+    </ul>
+</div>
+
+<br/>
 
 <span style="color: var(--highlight-color); display: inline-block; width: 300px;">Student Software Engineer @ Ericsson</span><span style="display: inline-block; width: 200px;"><i class="fas fa-calendar" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Jan 2017 - Jun 2018</span><span style="display: inline-block; width: 150px;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Split, Croatia</span>
 
-Main responsibility was working on a synchronization software that uses GNSS (Global Navigation Satellite System) and PTP (Precision Time Protocol). Technologies used in implementation and scripting were C/C++ and Python.
+<div style="text-align: justify;">
+    Responsibilities:
+    <ul>
+        <li>working on a synchronization software that uses GNSS and PTP</li>
+        <li>using C and C++ in implementation</li>
+        <li>using Python for scripting</li>
+    </ul>
+</div>
+
+<br/>
 
 ## Education
 
