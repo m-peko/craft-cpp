@@ -1,22 +1,22 @@
 ---
-title: Empowering the standard threads
+title: Expanding On Standard Threads
 author: Marin Peko
 date: 2020-06-13 08:00:00 +0200
 categories: [C++11, C++20, Thread, Multithreading]
 tags: [c++11, c++20, thread, multithreading]
 ---
 
-Parallel computing along with the concept of multithreading are two terms that most of the developers are fear of and associate them with huge amount of data races and hours and hours of debugging. However, every developer is faced with these issues at least once in a lifetime and, as with all the things in a life, it's better to face the issue as soon as possible.
+Parallel computing along with the concept of multithreading are two terms that most of the developers are afraid of and associate them with huge amount of data races and hours and hours of debugging. However, every developer is faced with these issues at least once in their lifetime and as with all things in life, it's better to face the issue as soon as possible.
 
-Having above said in mind, I will try to demystify some of the pitfalls of multithreading as well as show some interesting approaches.
+Having above said in mind, I will try to demistify some of the pitfalls of multithreading as well as show some interesting approaches.
 
 So, let's start with one of the most common cases...
 
 ## Processing data in a separate thread
 
-Let's imagine a common situation when there is a continuous data flow that needs to be processed. Since we don't want to occupy the main thread's resources, the practical approach would be to separate processing into another thread.
+Let's imagine a common situation where there is a continuous data flow that needs to be processed. Since we don't want to occupy the main thread's resources, the practical approach would be to separate processing into another thread.
 
-![Separate thread]({{ "/assets/img/2020-06-13-empowering-the-standard-threads/separate-thread.png" | relative_url }})
+![Separate thread]({{ "/assets/img/2020-06-13-expanding-on-standard-threads/separate-thread.png" | relative_url }})
 
 Now, how could we implement the continuous processing in a separate thread's body?
 
@@ -272,7 +272,7 @@ void run() override {
 
 Play with the code on [wandbox](https://wandbox.org/permlink/JJ9kKLWixx4dLYLM).
 
-## What brings C++20?
+## What does C++20 bring?
 
 All the code we have written above (which btw works with C++11) is great and it might work eventually, but developers tend to use standard stuff as much as they can (even though some of them always try to be smart and reinvent the wheel <span>&#129488;</span>). They don't want to bother themselves writing helper classes, utility functions etc. That's where C++20 standard kicks in...
 
