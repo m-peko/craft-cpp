@@ -6,9 +6,9 @@ categories: [C++11, C++20, Thread, Multithreading]
 tags: [c++11, c++20, thread, multithreading]
 ---
 
-Parallel computing along with the concept of multithreading are two terms that most of the developers are afraid of and associate them with huge amount of data races and hours and hours of debugging. However, every developer is faced with these issues at least once in their lifetime and as with all things in life, it's better to face the issue as soon as possible.
+Parallel computing along with the concept of multithreading are two terms that most of the developers are afraid of and associate them with a huge amount of data races and hours and hours of debugging. However, every developer is faced with these issues at least once in their lifetime, and as with all things in life, it's better to face the issue as soon as possible.
 
-Having above said in mind, I will try to demistify some of the pitfalls of multithreading as well as show some interesting approaches.
+Having above said in mind, I will try to demystify some of the pitfalls of multithreading as well as show some interesting approaches.
 
 So, let's start with one of the most common cases...
 
@@ -18,7 +18,7 @@ Let's imagine a common situation where there is a continuous data flow that need
 
 ![Separate thread]({{ "/assets/img/2020-06-13-expanding-on-standard-threads/separate-thread.png" | relative_url }})
 
-Now, how could we implement the continuous processing in a separate thread's body?
+Now, how could we implement continuous processing in a separate thread's body?
 
 The very first thing that could come to some readers' minds might be something like:
 
@@ -67,11 +67,11 @@ Play with the code on [wandbox](https://wandbox.org/permlink/Rf5ZdFCiCRR3ma4Y).
 
 ## More power to the threads
 
-Apart from the classical approach being shown in the previous section, thread's behavior can be controlled in a bit more innovative way... by taking advantage of `std::promise`s and `std::future`s. And... I must admit... above example is pretty simple and, in this cruel world, source code gets more and more complex on a daily basis. Therefore, a bit more expressive solution would be preferable...
+Apart from the classical approach being shown in the previous section, thread's behavior can be controlled in a bit more innovative way... by taking advantage of `std::promise`s and `std::future`s. And... I must admit... the above example is pretty simple and, in this cruel world, source code gets more and more complex on a daily basis. Therefore, a bit more expressive solution would be preferable...
 
-What do you think of creating a separate class which would be a base class for all our future non-blocking tasks? That would, eventually, put emphasis on the business logic and hide that ugly part of the thread handling.
+What do you think of creating a separate class which would be a base class for all our future non-blocking tasks? That would, eventually, emphasize the business logic and hide that ugly part of the thread handling.
 
-Let's take a look at the implementation of such a base class that I have called `Thread` (sound so complicated... <span>&#128521;</span>):
+Let's take a look at the implementation of such a base class that I have called `Thread` (sounds so complicated... <span>&#128521;</span>):
 
 ```cpp
 class Thread {
@@ -139,7 +139,7 @@ private:
 
 First, `start` function is responsible for running the separate thread and creating both `std::promise<void>` instance, which is usually used to communicate stateless events, and `std::future<void>` instance with a shared state being set.
 
-Furthermore, `stop_request_` data member is used as a some sort of a signal, i.e. once the `stop` function is being called and the value of `stop_request_` is set, `stop_request_result_` will be ready and, thus, `is_stop_requested` function will return `true`. On the other hand, if we don't call the `stop` function, value of `stop_request_` data member won't be set and, therefore, `stop_request_result_` won't be ready.
+Furthermore, `stop_request_` data member is a some sort of a signal, i.e. once the `stop` function is being called and the value of `stop_request_` is set, `stop_request_result_` will be ready and, thus, `is_stop_requested` function will return `true`. On the other hand, if we don't call the `stop` function, the value of `stop_request_` data member won't be set and, therefore, `stop_request_result_` won't be ready.
 
 At the end, there is a `run` function, a pure virtual function, which needs to be implemented in each class derived from the `Thread` class. This function is representing the actual work which will eventually get executed in a separate thread.
 
@@ -173,7 +173,7 @@ private:
 };
 ```
 
-As you might have already noticed, `Thread` base class has brought some expressiveness and cleanliness to the source code giving the reader ability to put the focus on the logic and not on the details related to the thread handling. `is_stop_requested` function is used for controlling the processing of the data in an elegant way, as opposed to the first example in this article. And... let's see how we can use above class:
+As you might have already noticed, `Thread` base class has brought some expressiveness and cleanliness to the source code giving the reader ability to put the focus on the logic and not on the details related to the thread handling. `is_stop_requested` function is used for controlling the processing of the data in an elegant way, as opposed to the first example in this article. And now... let's see how we can use the class above:
 
 ```cpp
 int main() {
@@ -328,7 +328,7 @@ jthread::~jthread() {
 }
 ```
 
-So... with C++20, we have an easy way to stop the thread. But, what about pausing/resuming the thread? Do we need to implement it on our own, by using `std::condition_variable` or the same mechanism with `std::promise<void>` and `std::future<void>` we have used in our custom `Thread` class? Would it be handy to have `std::pause_token` too? I leave answering these question to you...
+So... with C++20, we have an easy way to stop the thread. But, what about pausing/resuming the thread? Do we need to implement it on our own, by using `std::condition_variable` or the same mechanism with `std::promise<void>` and `std::future<void>` we have used in our custom `Thread` class? Would it be handy to have `std::pause_token` too? I leave answering these questions to you...
 
 ## Conclusion
 
