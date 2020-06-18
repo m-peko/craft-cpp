@@ -90,7 +90,10 @@ public:
     void start() {
         if (!thread_.joinable()) {
             stop_request_ = std::promise<void>();
-            thread_ = std::thread(&Thread::run, this, std::move(stop_request_.get_future()));
+            thread_ = std::thread(
+                &Thread::run, this,
+                std::move(stop_request_.get_future())
+            );
         }
     }
 
@@ -244,6 +247,6 @@ So... with C++20, we have an easy way to stop the thread. But, what about pausin
 
 ## Conclusion
 
-In this article, I have tried to explain a few things that can be achieved with C++11's `std::thread` and its younger brother - C++20's `std::jthread`. Our custom `Thread` class with functionalities explained above can also be implemented by using `std::condition_variable`s. Do you like my approach? What's the solution you prefer?
+In this article, I have tried to explain a few things that can be achieved with C++11's `std::thread` and its younger brother - C++20's `std::jthread`. Our custom `Thread` class with functionalities explained above can also be implemented by using `std::condition_variable`s and `std::atomic`s. Do you like my approach? What's the solution you prefer?
 
 Let me know in the comments below... <span>⬇️</span><span>👇</span>
