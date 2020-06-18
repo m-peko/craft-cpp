@@ -77,35 +77,28 @@ Let's take a look at the implementation of such a base class that I have called 
 class Thread {
 public:
     Thread() = default;
-    Thread(Thread const& other) = default;
+    Thread(Thread const& other) = delete;
     Thread(Thread&& other) = default;
 
-    Thread& operator=(Thread const& other) = default;
+    Thread& operator=(Thread const& other) = delete;
     Thread& operator=(Thread&& other) = default;
 
     ~Thread() {
-        try {
-            join();
-        } catch (std::system_error const& ex) {
-            // ignore exception
-        }
+        join();
     }
 
     void start() {
         if (!thread_.joinable()) {
-            thread_ = std::thread(&Thread::run, this);
-
             stop_request_ = std::promise<void>();
-            stop_request_result_ = std::future<void>(stop_request_.get_future());
+            thread_ = std::thread(&Thread::run, this, std::move(stop_request_.get_future()));
         }
     }
 
     void stop() {
-        if (stop_request_result_.valid()) {
-            auto status = stop_request_result_.wait_for(std::chrono::milliseconds{ 0 });
-            if (std::future_status::ready != status) {
-                stop_request_.set_value();
-            }
+        try {
+            stop_request_.set_value();
+        } catch (std::future_error const& ex) {
+            // ignore exception in case of multiple calls to 'stop' function
         }
     }
 
@@ -115,9 +108,12 @@ public:
         }
     }
 
-    bool is_stop_requested() const noexcept {
-        if (stop_request_result_.valid()) {
-            auto status = stop_request_result_.wait_for(std::chrono::milliseconds{ 0 });
+protected:
+    virtual void run(std::future<void> const& stop_token) = 0;
+
+    static bool is_stop_requested(std::future<void> const& token) noexcept {
+        if (token.valid()) {
+            auto status = token.wait_for(std::chrono::milliseconds{ 0 });
             if (std::future_status::timeout != status) {
                 return true;
             }
@@ -126,20 +122,17 @@ public:
         return false;
     }
 
-protected:
-    virtual void run() = 0;
-
 private:
     std::thread thread_;
-
     std::promise<void> stop_request_;
-    std::future<void> stop_request_result_;
 };
 ```
 
-First, `start` function is responsible for running the separate thread and creating both `std::promise<void>` instance, which is usually used to communicate stateless events, and `std::future<void>` instance with a shared state being set.
+First, `start` function is responsible for creating an instance of `std::promise<void>` and running the separate thread that owns `std::future<void>` associated with `std::promise`. Now, if we ever decide to move the instance of our `Thread` class, we will be able to stop its execution.
 
-Furthermore, `stop_request_` data member is a some sort of a signal, i.e. once the `stop` function is being called and the value of `stop_request_` is set, `stop_request_result_` will be ready and, thus, `is_stop_requested` function will return `true`. On the other hand, if we don't call the `stop` function, the value of `stop_request_` data member won't be set and, therefore, `stop_request_result_` won't be ready.
+With above being said, `stop_request_` data member is a some sort of a signal, i.e. once the `stop` function is being called and the value of `stop_request_` is set, `stop_token` will be ready and, thus, `is_stop_requested` function will return `true`. On the other hand, if we don't call the `stop` function, the value of `stop_request_` data member won't be set and, therefore, `stop_request_result_` won't be ready.
+
+Furthermore, notice the `try...catch` block inside the `stop` function. First call to `stop` function will store the value into the shared state but every following call will result in `std::future_error` exception because the shared state is already storing the value. That's why we need to protect the end-user against this behavior.
 
 At the end, there is a `run` function, a pure virtual function, which needs to be implemented in each class derived from the `Thread` class. This function is representing the actual work which will eventually get executed in a separate thread.
 
@@ -158,10 +151,10 @@ public:
     ~Task() = default;
 
 private:
-    void run() override {
+    void run(std::future<void> const& stop_token) override {
         std::cout << "Task start" << std::endl;
 
-        while (!is_stop_requested()) {
+        while (!is_stop_requested(stop_token)) {
             std::cout << "Task body" << std::endl;
 
             // simulate processing
@@ -189,88 +182,7 @@ int main() {
 }
 ```
 
-If you wish to experiment a bit, play with the code on [wandbox](https://wandbox.org/permlink/m6l1gQhzEONStXMs).
-
-## Pausing the thread's work
-
-Some of us may also wonder if we can pause the thread's work for a while... For example, we can have a bunch of `Worker` objects that process a continuous data flow on one side, and we can have one `Manager` object that controls all the `Worker`s  on the other side. `Manager` has the power to pause one of the `Worker`s for some time. In order to cover this use case, we need to pause the `Worker`'s thread somehow. Let's see how we can achieve this...
-
-We will start by adding 2 new private data members to our `Thread` class:
-
-```cpp
-std::promise<void> pause_request_;
-std::future<void> pause_request_result_;
-```
-
-These members need to be initialized in the `start` function like:
-
-```cpp
-pause_request_ = std::promise<void>();
-pause_request_result_ = std::future<void>(pause_request_.get_future());
-pause_request_.set_value();
-```
-
-They will be used by `pause`, `resume` and `is_pause_requested` public functions:
-
-```cpp
-void pause() {
-    pause_request_ = std::promise<void>();
-    pause_request_result_ = std::future<void>(pause_request_.get_future());
-}
-
-void resume() {
-    if (pause_request_result_.valid()) {
-        auto status = pause_request_result_.wait_for(std::chrono::milliseconds{ 0 });
-        if (std::future_status::ready != status) {
-            pause_request_.set_value();
-        }
-    }
-}
-
-bool is_pause_requested() const noexcept {
-    if (pause_request_result_.valid()) {
-        auto status = pause_request_result_.wait_for(std::chrono::milliseconds{ 0 });
-        if (std::future_status::timeout == status) {
-            return true;
-        }
-    }
-
-    return false;
-}
-```
-
-The principle is pretty much the same as for the stop mechanism. Furthermore, we need to have a `wait_for_resume` function which will pause the execution of the thread until it is resumed:
-
-```cpp
-void wait_for_resume() const noexcept {
-    if (pause_request_result_.valid()) {
-        pause_request_result_.wait(); // blocks the current thread
-    }
-}
-```
-
-Now, all we need is start using new functionalities in `Task::run` function like:
-
-```cpp
-void run() override {
-    std::cout << "Task start" << std::endl;
-
-    while (!is_stop_requested()) {
-        if (is_pause_requested()) {
-            wait_for_resume();
-        }
-
-        std::cout << "Task body" << std::endl;
-
-        // simulate processing
-        std::this_thread::sleep_for(std::chrono::seconds{ 2 });
-    }
-
-    std::cout << "Task end" << std::endl;
-}
-```
-
-Play with the code on [wandbox](https://wandbox.org/permlink/JJ9kKLWixx4dLYLM).
+If you wish to experiment a bit, play with the code on [wandbox](https://wandbox.org/permlink/ZdPOKF5VQOQL8VRk).
 
 ## What does C++20 bring?
 
@@ -313,7 +225,7 @@ int main() {
 
 Check out the live demo on [wandbox](https://wandbox.org/permlink/fFjuQvVopVL9HiD4).
 
-As you might see, `std::jthread`'s constructor accepts a callable object to execute in the new thread. That callable object can (but does not have to) accept a `std::stop_token` for its first argument. `std::stop_token` is, at least by functionality, similar to our `stop_request_`/`stop_request_result_` couple from the previous examples. It provides the means to check if a stop request has been made and can be made. So, eventually our `is_stop_requested` function has now been replaced by `std::stop_token::stop_requested` function.
+As you might see, `std::jthread`'s constructor accepts a callable object to execute in the new thread. That callable object can (but does not have to) accept a `std::stop_token` as its first argument. `std::stop_token` is, at least by functionality, similar to our combination of `stop_request_` data member and `stop_token` parameter of `run` function. It provides the means to check if a stop request has been made and can be made. So, eventually our `is_stop_requested` function has now been replaced by `std::stop_token::stop_requested` function.
 
 Furthermore, if we want to send the stop signal from the parent thread, we can call `std::jthread::request_stop` function which is similar to our custom `Thread::stop` function.
 
@@ -328,7 +240,7 @@ jthread::~jthread() {
 }
 ```
 
-So... with C++20, we have an easy way to stop the thread. But, what about pausing/resuming the thread? Do we need to implement it on our own, by using `std::condition_variable` or the same mechanism with `std::promise<void>` and `std::future<void>` we have used in our custom `Thread` class? Would it be handy to have `std::pause_token` too? I leave answering these questions to you...
+So... with C++20, we have an easy way to stop the thread. But, what about pausing/resuming the thread? Do we need to implement it on our own? Would it be handy to have `std::pause_token` too? I leave answering these questions to you...
 
 ## Conclusion
 
