@@ -37,9 +37,7 @@ std::transform(
 
 But this approach has its downsides...
 
-First of all, by using C++11, we are limited to zipping only two ranges together. C++17 has improved that a bit and we can then zip three ranges. However, there might be some cases where we want to zip as many ranges as possible.
-
-Furthermore, we need to create a new `std::vector` instance which unfortunately results in memory allocation and, hence, a drop in performance. Consequently, we cannot use `std::transform` as a part of a range-based for loop like:
+First of all, we are limited to zipping only two ranges together when there might be some cases where we want to zip as many ranges as possible. Second, we need to create a new `std::vector` instance which unfortunately results in memory allocation and, hence, a drop in performance. Consequently, we cannot use `std::transform` as a part of a range-based for loop like:
 
 ```c++
 for (auto&& i : std::transform(...)) {
@@ -256,7 +254,7 @@ constexpr void next(std::index_sequence<Is...>) noexcept {
 }
 ```
 
-Furthermore, `make` function creates a tuple out of the values current iterators are pointing to. However, if the current iterator is the end iterator, then the value of the specific type is default initialized.
+Furthermore, `make` function creates a tuple out of the values current iterators are pointing to. However, if the current iterator is the end iterator, then the value of the specific type is braced-list initialized.
 
 ```cpp
 template <std::size_t... Is>
