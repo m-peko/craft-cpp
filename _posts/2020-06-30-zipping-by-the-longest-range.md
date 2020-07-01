@@ -1,5 +1,5 @@
 ---
-title: Zipping The Longest Range
+title: Zipping By The Longest Range
 author: Marin Peko
 date: 2020-06-30 08:00:00 +0200
 categories: [C++17, Ranges, Algorithm]
@@ -111,7 +111,7 @@ For example, Python's *itertools* module provides such functionality with `zip_l
 
 Let's try and make something similar in C++...
 
-## Zip the longest one!
+## Zip by the longest one!
 
 First, we need to set the requirements for our `zip_longest` function:
 
