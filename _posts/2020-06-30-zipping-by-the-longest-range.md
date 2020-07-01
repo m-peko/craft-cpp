@@ -12,7 +12,7 @@ But sometimes software requirements go beyond the power of STL...
 
 In this article, I will try to explain several ways on how to zip multiple ranges together as well as the downsides of those approaches, and what we can do to overcome those downsides...
 
-## Standard way of zipping ranges
+## The standard way of zipping ranges
 
 Let's say we have two `std::vector`s like:
 
@@ -39,7 +39,7 @@ But this approach has its downsides...
 
 First of all, by using C++11, we are limited to zipping only two ranges together. C++17 has improved that a bit and we can then zip three ranges. However, there might be some cases where we want to zip as many ranges as possible.
 
-Furthermore, we need to create a new `std::vector` instance which unfortunately results in memory allocation and, hence, drop in performance. Consequently, we cannot use `std::transform` as a part of a range-based for loop like:
+Furthermore, we need to create a new `std::vector` instance which unfortunately results in memory allocation and, hence, a drop in performance. Consequently, we cannot use `std::transform` as a part of a range-based for loop like:
 
 ```c++
 for (auto&& i : std::transform(...)) {
@@ -49,13 +49,13 @@ for (auto&& i : std::transform(...)) {
 
 Instead, we need to have an additional variable which IMO introduces a bit of noise to our code.
 
-At the end, if we ever pass two (or, in case of C++17, maximum of three) ranges of different lengths, we would run into an **U**ndefined **B**ehavior as we would iterate off the end of one of the ranges.
+In the end, if we ever pass two (or, in case of C++17, maximum of three) ranges of different lengths, we would run into an **U**ndefined **B**ehavior as we would iterate off the end of one of the ranges.
 
 Now that we have seen some drawbacks of `std::transform`, let's see other options we have...
 
 ## Using *Boost* library
 
-Boost library has solved some of the issues we have addressed in the previous section. Its `boost::combine` function accepts variadic number of ranges to be zipped and returns `combined_range` (which is an `iterator_range` of a `zip_iterator`).
+Boost library has solved some of the issues we have addressed in the previous section. Its `boost::combine` function accepts a variadic number of ranges to be zipped and returns `combined_range` (which is an `iterator_range` of a `zip_iterator`).
 
 ```c++
 #include <boost/range/combine.hpp>
@@ -73,7 +73,7 @@ Since `boost::combine` uses `iterator_range` as a return value, there is no more
 
 So what's the problem with the Boost library then?
 
-General problem with the Boost library is its massiveness and the fact that you may only need `boost::combine` function but what you get is the whole library with lots of additional features that you don't actually use. Also, using a 3rd party library is, by itself, not the best thing in the world. It's a dependency which can, especially in case of Boost, increase compilation time, complicate your deployment etc. Apart from this, there is another problem that's present with `std::transform` solution too... and that's the famous **U**ndefined **B**ehavior, i.e. if your input ranges are of the different lengths, then your program might crash or iterate beyond the end.
+The general problem with the Boost library is its massiveness and the fact that you may only need `boost::combine` function but what you get is the whole library with lots of additional features that you don't actually use. Also, using a 3rd party library is, by itself, not the best thing in the world. It's a dependency which can, especially in the case of Boost, increase compilation time, complicate your deployment etc. Apart from this, there is another problem that's present with `std::transform` solution too... and that's the famous **U**ndefined **B**ehavior, i.e. if your input ranges are of the different lengths, then your program might crash or iterate beyond the end.
 
 So... *Boost* is not perfect either...
 
@@ -105,7 +105,7 @@ As stated in proposal [P1035R4](http://www.open-std.org/jtc1/sc22/wg21/docs/pape
 
 Therefore, unlike `std::transform` and *Boost* library, `ranges::v3::view::zip` function does not lead us into an **U**ndefined **B**ehavior if input ranges are of different lengths.
 
-So, basically *ranges-v3* library solves pretty much all the problems we had with previous two approaches. But... there might be something missing here... What about zipping by the longest input range?
+So, basically *ranges-v3* library solves pretty much all the problems we had with the previous two approaches. But... there might be something missing here... What about zipping by the longest input range?
 
 For example, Python's *itertools* module provides such functionality with `zip_longest` function which makes an iterator that aggregates elements from each of the ranges. If the ranges are of uneven length, missing values are filled-in with the value specified on a function call and iteration continues until the longest range is exhausted. Pretty cool <span>&#128526;</span>, right?
 
@@ -119,7 +119,7 @@ First, we need to set the requirements for our `zip_longest` function:
 2. iterate up to the length of the longest range
 3. if one of the ranges runs out early, set its values to default ones
 
-So, the usage at the end would look something like:
+So, the usage in the end would look something like:
 
 ```cpp
 float a[]{ 1.2, 2.3, 3.4, 4.5 };
@@ -233,7 +233,7 @@ zip_iterator<Ts...> make_zip_iterator(std::tuple<Ts...>&& begin_tuple,
 }
 ```
 
-Finally, let's get to the implementation of the `zip_iterator` class which contains all the logic. Actually, to be precise, overloaded increment operator contains all the logic as it increments iterators to all the ranges *(1)* and constructs the value tuple *(2)*. While constructing the value tuple, default value is being used if the incremented iterator is the end iterator of a particular range. Otherwise, the real value is being used.
+Finally, let's get to the implementation of the `zip_iterator` class which contains all the logic. Actually, to be precise, an overloaded increment operator contains all the logic as it increments iterators to all the ranges *(1)* and constructs the value tuple *(2)*. While constructing the value tuple, the default value is being used if the incremented iterator is the end iterator of a particular range. Otherwise, the real value is being used.
 
 ```cpp
 constexpr zip_iterator& operator++() noexcept {
@@ -256,7 +256,7 @@ constexpr void next(std::index_sequence<Is...>) noexcept {
 }
 ```
 
-Furthermore, `make` function creates a tuple out of the values current iterators are pointing to. However, if the current iterator is the end iterator, then the value of the specific type is defaultly initialized.
+Furthermore, `make` function creates a tuple out of the values current iterators are pointing to. However, if the current iterator is the end iterator, then the value of the specific type is default initialized.
 
 ```cpp
 template <std::size_t... Is>
@@ -357,6 +357,6 @@ If you wish to experiment a bit, play with the code on [godbolt] [1].
 
 ## Conclusion
 
-Throughout this article, we have discussed about several approaches on how to zip multiple ranges together as well as the benefits and drawbacks of using those approaches. At the end, an example of how to zip the longest range, a feature which is missing from all the other approaches we have mentioned before, has been shown. Let me know your thoughts and suggestions in the comment section below... <span>⬇️</span><span>👇</span>
+Throughout this article, we have discussed several approaches on how to zip multiple ranges together as well as the benefits and drawbacks of using those approaches. In the end, an example of how to zip the longest range, a feature which is missing from all the other approaches we have mentioned before, has been shown. Let me know your thoughts and suggestions in the comment section below... <span>⬇️</span><span>👇</span>
 
 [1]: https://godbolt.org/#z:OYLghAFBqd5QCxAYwPYBMCmBRdBLAF1QCcAaPECAM1QDsCBlZAQwBtMQBGAFlICsupVs1qhkAUgBMAISnTSAZ0ztkBPHUqZa6AMKpWAVwC2tQVvQAZPLUwA5YwCNMxLgDYADKQAOqBYXW0eoYmgj5%2BanRWNvZGTi6cHorKmKoBDATMxARBxqacSSoRtOmZBFF2js5ungoZWTkh%2BbWl5TFx1QCUiqgGxMgcAORSAMzWyIZYANTiwzoEBl7sM9ji7gCCI2MTmNOzAG4pRMTLqxuSo7TjBlMzOgZqrIQAnifrm5fbuzrqtcSYzEZXmcLlcbrNCM5mEcge9QTtbmxgCRCAhAcMVm91gRMEZFlD4bMCE8vFoAZgAHSUyYAFQUQPGzAUCkmAC88F4APoQ4hQkjTADssnWkxFkwMflEk2s%2BH6zJmABFJrV0CAQNLMAAPDlKACOBi0/Q5NGOs1plPJJ2GQo26y8Bgcj2QIFOorFEuAUuxPKOHJY2KRxCeu0VytVxoA7pl0FyvbziByMsAZtbXeLrB78FQqM4DZgE8SdiKFUqCCqQF4CMRM1QE8mXaK05LuXH8yTXcGS2X5otMLczZTLSmG%2B7Jns2PrW4X2x3QyBu0tCQXaGTO6rmz7K8xCHTTTvsKqx4Y80SSebB/WRY2PT5rF7p%2B3i4eJyfMAAqOvC4fpyZ/bN/S5TtOj7jseBZSK4H42msrpoLQtSal4xCsuyMaQkcECzvOva7me6LgeBkxOMA1iod6JAJgs7CkKuc6UdhOj9haeGSBBLGTOYpEtlhHQXu2ICemh5FYRy4iCjREZRrcmF0X2Ci4Ss6IQERJHrkJdEdAK8qkLx04cap8bCaJ0jiSQkZVlJpaqlhsnycsEB6bGG7qZp2mfveo4gRRPYiWJRjMAA1pgEDSngsoQB0GmifKvFGVFpy8bB8EaohyGcvpGGWbRPY2QOzGsa47HaJxTk9jxbl8QJZEGXRPnGbOEnmbM0nZThuUKdg9lFfpXnsJF/LReVsX9fFg0AKyyONtAYHgCgsOZo3RQtkyJdiyVIcw9yoJMqAklVr7hZMU2av0FYCkO05/PMxC0B5R49XmkGunFmLQaK4jje90hTfgs2SQt72KitCHrZt227XGAC0dkaUdGonQQZ06aKl29Dd4FPseNWPW9w0vTBdBJSlbJpY5JAETtgnHDIcgHbD8OI%2BVro2BqBDBdooWYAo4U8VaSMihj90ch2fmBWzMqc9z2MXZgV03a%2BBAIDNUuaSNr0ikDa2pcVfIU1Vcg07eMOoMdmCnbFjOihtRCTAQuIdvLis7udD7UzIEAOzNPPO66KPXTbuLK89UFPR9k3Tb982LYDBOrSlDioPoYOU2AYAKhAxPa0hK0EcQCAKBpK2HcbcOmwj5tq%2B2vs3d1wmTCnxa53JNdY7zg248Hb2h194dzegAMA8tMfA4RCesEnevDNFk/pyh%2BmD3BBA53nBcx0XJtm4KfM/jLqOVVxNXBg3efks33mB%2B3pyIXgY7Ys65XYriwjYl8s5%2BCyx7mpMACSe4xV330zV7v3JaGsUpWy2iLIKs51Ral1PqACtwf7ySNuvMum8LYiirjRSB90IBb1dHgjB7kaLABlogvcwVSbVW8pFSexZZykMXrMH%2BdkHKU0FrQgAYvg%2B8L5lxGB2NAqhCYeTbluFgcYL4MplkQpgPY0jVSMPIXZU%2B7AOQRR5vuEAAsXxDUVHfCuxDRSvgYWQ5hFDVF5jKoY%2B8HQzxEK9jFC%2B98cR4mfhZMsb8P5UhYXhcqoCkJ7FQHgdAh1NSs2gdoTU2pMB6lzOQ5Ba8S4b29qKKAPCRSmKYToXxHVLHqMPpPEhZickULYVVDhuxuFENdFk5Ril8kaQMUYosrtpB1PMSo4RwlrHuS6OaRxbcBpQSvjfDgvEa4Fj3iVNRytJltnKfvM%2BrcK46KmTolu1o4orNOA/NxBI5hLjJJ/WkQIM76RykxbAkwcHnKoQorKC4GJyTavhNiHFuIMwrlgu5lNLknDEvVUykkmqZWsq1K5rCiqfO2Vs5xaw9lPwOXw45VJTl%2BLWL8iezz5I3ICnmLFcYHngpxa8liBFlK0HutRZqTzGInHJe86Fzly4%2Bx3n7Ql0IIUAtSZkzKDU%2B6gq7DJbleFFKUvul0LeQLiBmUFToWl9F6Vio6h89STip5wuGbs1xSKvgooEZ/AASiIUh9JhBMi1qwOgpDagch5KIeE6CK5XilOzWUM5MowJiXEgCRoyazBNY62yOzbT2kdM00UCFHSEHnoTJCGdrWOrtQ60hEAg1msZa4T%2BqbOa9PvPxXNChaomVlSCnQGbsIdSLXYqkUVXI2NqXgd%2BJa/KwObUFEKYUIoqzbrIeFIcJrdx%2BkA/6ICh6a3AYRTAxFaAHULnTUuXz3JYNubPe5EqsJiw5lzCK1E1U9m3d2iK59tVjSHQAiOfcx3RwXsPKd5h52r0XSkreq78Uck5SQTq0Yt1dolho09qtB2fUvaOqOcbY5IVfh2hMSoO1PoXkk%2BmrL7xYK8SJFZT0B2dwvT3P6EGAkj0Tq4okiHajIaXah6WstJjuEKSGBDgyK5B0vsQa%2B%2BJI0ikRfiF%2BmUMMEE/rkv%2BeGR0EYHlOzddEHnergfE8xiSF3FxQ86ld7KbqzhwVu2clKHlKM6YpIt6ja3kmY9hs9FcePuKFaqATQnf7ntA/hyOEnQYHvYDJqJsDYnwP6AktqK8kMvrQby7etHNMfu05lR9HTSl2SMxFAZQG8aiiswcmDLbBM%2BIcyx/%2Bznr2EYnSlDLx48Xtvfp5rA3nfV%2BYUwFyDlHX1ELwFQSDw8ID0YVPQjtqAqDmnTaazAPbqPEKwe4ZW5n2KsCUMulp6HMptrwYChDsXckQASyZzSZn7xB3M8B1LureO3ANTsakQIQNhzEy58dd7NYlbg14iAZ2s0/kG4FijwXZs0d3rOH6GQAIPN07mroNFH3A%2B20WeFozOO8UVbcStuKjPK3uwjDDkFYWqzS/qo5hqqSVphHlq7BWB5EcTTazmBB7WDfh4N3FZPk2s3x1mnNg385fbC7ventrKe5pp8GtqhDG2lrlXzs1hnWcmd4sx1j6xbx4usAdEbVBrVQkmMwT6/cxKcHJJIaikhyTDGosMckvBJjcHJKNFWWHRSzgOKoAN3x6DLEIkZSY%2BRJi68mIbs31FLcY/KrOTIPIXizHQD0B0mAjfO4kFr8k7v9ee%2BN8MK3ztbeHAd6/Ss6Znd9zElISQ6vJCe/zw4fP1F88SCLyn/bIpjSTAgOAt5BVPp4Gonwai/lqKsAHvxLnFOG/UQcNRZA1F0DDdU/eWcaB7hfFuFKWfsxphV4hkvyQC%2BdCTD4Ov1fkwV/5%2B3/5bf%2B%2B99V9uHPseZ/F%2BznMN363kOLNsto%2BNnZ/UBhdFYCAAYo0BikFMAMdwP%2BqAn%2BOg%2BsMgSoPQfQ8I5wnAP%2BBAn%2BABe6/kIAo0ngH%2BAw3AP%2BRgXA7gngf%2BABpAQBAwP%2BCgIAngcB/%2Bb%2BpAcAsASAmoKQm0ZAFADexAwACgAACiIMoAwAgKgOGH/jAaQGgLiHgE/AEBwTYKwNwbwXgT/kIV4CIVUKwcuF4AoDwQQIIagMIewMQAAPL3BSF8HwE/50HIBrAsEkFEGkAmHpD4B/4/40D0BMBsAcA8D8AgC67CCiAoCgHyCPAOAkGwD8IcBFp7CG4HAuCVgGC0D%2BR7o7RFAWEQzKgKiV6yAyCcD8jEEQH9CCDKjWDiFcE8GGEDAwHv6f7f6/5GEEGf4agAAcrgEMrg3AkwwAyAyA9ekR0RGk2AGo9BRw9euAhAfIIwnAGkIBbSsBRhe6CA/wWALg4UpASBKBQgn%2BGBpAWBnAOBFRFBVRlhJBZBkxpRAwkgP%2BMhOxExFBe64RfgGg3AQAA%3D%3D%3D
