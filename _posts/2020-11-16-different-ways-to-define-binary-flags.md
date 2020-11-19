@@ -6,23 +6,23 @@ categories: [C++, Flags]
 tags: [c++, flags]
 ---
 
-Using binary flags in software seems to be a common thing no matter what software domain is nor what programming language is being used in implementation. Of course, this is not a coincidence. There are indeed several hard reasons why is that so...
+Using binary flags in software seems to be a common thing regardless of software domain and programming language used in implementation. Of course, this is not a coincidence. There are indeed several strong reasons why that is so...
 
 ![Flag]({{ "/assets/img/2020-11-16-different-ways-to-define-binary-flags/flags.png" | relative_url }})
 
-In this article, I will give my best to explain what are the reasons to use binary flags in your software design and what are some ways to define them. At the end, we will see advantages and disadvantages of each of these approaches... So, stay tuned <span>&#128526;</span>!
+In this article, I will give my best to explain the reasons to use binary flags in your software design and show some ways to define them. At the end, we will see advantages and disadvantages of each of these approaches... So, stay tuned! <span>&#128526;</span>
 
 ## Why Use Binary Flags?
 
 Two things come to my mind when I mention binary flags. Those are: **efficiency** and **scalability**.
 
-Even though single binary flag does not tell you more than *yes* or *no*, collection of such flags holds a lot of information in a very small storage space. E.g. single byte can represent 8 flags and, thus, we can make use of 8 states, options or attributes in our software.
+Even though single binary flag does not tell you more than *yes* or *no*, a collection of such flags holds a lot of information in a very small storage space - e.g. a single byte can represent 8 flags and thus we can make use of 8 states, options or attributes in our software.
 
-Furthermore, using binary flags is ultra-fast because compiler is dealing with two things it is really good with, primitive data types (such as `std::uint8_t`, `std::uint16_t` etc.) and basic bitwise operations. Both of these contribute to pretty good binary flags performance in runtime.
+Furthermore, using binary flags is ultra-fast because the compiler is dealing with two things it is really good with - primitive data types (such as `std::uint8_t`, `std::uint16_t` etc.) and basic bitwise operations. Both of these contribute to pretty good binary flags performance in runtime.
 
-Also, when talking about scalability, new state, option or attribute is easily added without "breaking" the old code.
+Also, on the subject of scalability, a new state, option or attribute is easily added without "breaking" the old code.
 
-Now that we have reasoned about why we should use binary flags at all, let's explain different ways on how to actually use them in C++...
+Now that we have reasoned about why we should use binary flags at all, let’s explain different ways on how to actually use them in C++...
 
 ## Bare Enumerations
 
@@ -109,19 +109,22 @@ template <typename EnumT>
 class Flags {
     static_assert(std::is_enum_v<EnumT>, "Flags can only be specialized for enum types");
 
-    using UnderlyingT = typename std::make_unsigned_t<typename std::underlying_type_t<E>>
+    using UnderlyingT = typename std::make_unsigned_t<typename std::underlying_type_t<EnumT>>;
 
 public:
     Flags& set(EnumT e, bool value = true) noexcept {
         bits_.set(underlying(e), value);
+        return *this;
     }
 
     Flags& reset(EnumT e) noexcept {
         set(e, false);
+        return *this;
     }
 
     Flags& reset() noexcept {
         bits_.reset();
+        return *this;
     }
 
     [[nodiscard]] bool all() const noexcept {
