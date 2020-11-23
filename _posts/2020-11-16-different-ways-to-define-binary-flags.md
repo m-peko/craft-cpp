@@ -111,7 +111,7 @@ That being said, in the next few sections, we will discover some alternatives to
 
 ## Using `std::bitset`
 
-`std::bitset`, introduced with C++11 standard, represents a fixed-size sequence of N bits. When using it, we don't need to overload all the necessary bitwise operators because those are already supported by the C++ standard. The only thing we need to do is to create a small wrapper class that would cross the bridge between the enumerated flags and `std::bitset`.
+`std::bitset` represents a fixed-size sequence of N bits. When using it, we don't need to overload all the necessary bitwise operators because those are already supported by the C++ standard. The only thing we need to do is to create a small wrapper class that would cross the bridge between the enumerated flags and `std::bitset`.
 
 Let's take a look how such wrapper class could look like:
 
