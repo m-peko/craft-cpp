@@ -90,7 +90,18 @@ enum class HugeFlags : std::uint64_t {
 };
 ```
 
-I think this looks pretty chaotic already... But wait... This is not the end. Imagine several developers updating these flags over time. Even if those changes are not happening that often, updating flags requires lots of brainwork and additional effort which we all want to avoid.
+Thanks to some Redditors ([here](https://www.reddit.com/r/cpp/comments/jzcos9/different_ways_to_define_binary_flags/)) and their comments, I realized I totally forgot about yet another way to define binary flags, by using shift operator like:
+
+```c++
+enum class HugeFlags : std::uint64_t {
+    // ...
+    huge_flag_a = 1ull << 48,
+    huge_flag_a = 1ull << 49,
+    // ...
+};
+```
+
+Above approach looks slightly better than the previous one but still... I think it is somehow chaotic... And wait... This is not the end. Imagine several developers updating these flags over time. Even if those changes are not happening that often, updating flags requires lots of brainwork and additional effort which we all want to avoid.
 
 Furthermore, we might specify a bit larger type than we actually need. E.g. if we need only 28 bit flags and we specify `std::uint64_t` as an underlying type, we waste some precious space there which, on some low-memory systems, might be critical.
 
