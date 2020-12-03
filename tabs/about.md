@@ -64,7 +64,7 @@ If you like the work I am doing, please consider supporting it:
 
 <a href="https://www.buymeacoffee.com/mpeko" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
-### How supporting helps me?
+### How Supporting Me Helps Me?
 
 - I have a reason to <strong style="color: var(--highlight-color);">write blog posts</strong> and <strong style="color: var(--highlight-color);">contribute</strong> to open-source software <strong style="color: var(--highlight-color);">more frequently</strong>
 - I get the <strong style="color: var(--highlight-color);">feeling of support</strong> which motivates me even more
