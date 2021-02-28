@@ -1,7 +1,7 @@
 ---
 title: Obscure Fact About References
 author: Marin Peko
-date: 2020-03-01 01:00:00 +0200
+date: 2021-03-01 01:00:00 +0200
 categories: [C++, Reference]
 tags: [c++, const, reference, structured-binding]
 ---
